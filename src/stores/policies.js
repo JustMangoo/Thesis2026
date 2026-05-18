@@ -1,166 +1,28 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { supabase } from '@/lib/supabase.js'
 
-const MOCK_ORGS = [
-  { id: 'org-1', name: 'Globex', industry: 'Manufacturing' },
-  { id: 'org-2', name: 'Initech', industry: 'Technology' },
-  { id: 'org-3', name: 'OmniCorp', industry: 'Retail' },
-  { id: 'org-4', name: 'Acme Corp', industry: 'Manufacturing' },
-  { id: 'org-5', name: 'Umbrella Ltd', industry: 'Pharmaceutical' },
-]
+const POLICIES_QUERY = `
+  *,
+  versions:policy_versions(
+    *,
+    sections:policy_sections(*),
+    signing_records:version_signing_records(*, org:organizations(*))
+  ),
+  receivers:policy_receivers(*, org:organizations(*))
+`
 
-const MOCK_SECTIONS = [
-  {
-    id: 'sec-1',
-    version_id: 'ver-1',
-    order_index: 0,
-    title: 'Labour Standards',
-    content: {
-      type: 'doc',
-      content: [
-        {
-          type: 'paragraph',
-          content: [
-            { type: 'text', text: 'All suppliers must ensure working conditions meet national labour law and the standards defined in this policy, including fair compensation, reasonable hours, and a safe working environment. ' },
-            { type: 'variableNode', attrs: { variableType: 'supplier', label: 'supplier_name' } },
-            { type: 'text', text: ' confirms by signing that these conditions are maintained and reviewed at least once per calendar year.' },
-          ],
-        },
-      ],
-    },
-    footnote: 'Where multiple jurisdictions apply, the stricter of the applicable national standard or this policy takes precedence.',
-  },
-  {
-    id: 'sec-2',
-    version_id: 'ver-1',
-    order_index: 1,
-    title: 'Environmental Compliance',
-    content: {
-      type: 'doc',
-      content: [
-        {
-          type: 'paragraph',
-          content: [
-            { type: 'text', text: 'Suppliers must comply with all applicable environmental regulations and report any incidents to ' },
-            { type: 'variableNode', attrs: { variableType: 'organization', label: 'organization_name' } },
-            { type: 'text', text: ' within 48 hours.' },
-          ],
-        },
-      ],
-    },
-    footnote: null,
-  },
-]
-
-const MOCK_DATA = [
-  {
-    id: 'pol-1',
-    title: 'OECD - Code of Conduct',
-    owner_id: null,
-    reminder_period_days: 30,
-    created_at: '2026-04-02T09:08:56Z',
-    updated_at: '2026-04-02T09:08:56Z',
-    versions: [
-      {
-        id: 'ver-1',
-        policy_id: 'pol-1',
-        version_number: 'v.4.00',
-        status: 'active',
-        require_esignature: false,
-        numbered_sections: false,
-        alternative_documentation: 'none',
-        styled_pdf_url: null,
-        created_at: '2026-04-02T09:08:56Z',
-        published_at: '2026-04-02T09:08:56Z',
-        sections: MOCK_SECTIONS,
-        signing_records: [
-          { id: 'sr-1', version_id: 'ver-1', organization_id: 'org-1', status: 'signed', org: MOCK_ORGS[0] },
-          { id: 'sr-2', version_id: 'ver-1', organization_id: 'org-2', status: 'pending', org: MOCK_ORGS[1] },
-          { id: 'sr-3', version_id: 'ver-1', organization_id: 'org-3', status: 'rejected', org: MOCK_ORGS[2] },
-          { id: 'sr-4', version_id: 'ver-1', organization_id: 'org-4', status: 'needs_review', org: MOCK_ORGS[3] },
-          { id: 'sr-5', version_id: 'ver-1', organization_id: 'org-5', status: 'pending', org: MOCK_ORGS[4] },
-        ],
-      },
-      {
-        id: 'ver-2',
-        policy_id: 'pol-1',
-        version_number: 'v.4.01',
-        status: 'draft',
-        require_esignature: true,
-        numbered_sections: false,
-        alternative_documentation: 'optional',
-        styled_pdf_url: null,
-        created_at: '2026-04-02T09:08:56Z',
-        published_at: null,
-        sections: [],
-        signing_records: [],
-      },
-      {
-        id: 'ver-hist-1',
-        policy_id: 'pol-1',
-        version_number: 'v.3.00',
-        status: 'archived',
-        require_esignature: false,
-        numbered_sections: false,
-        alternative_documentation: 'none',
-        styled_pdf_url: null,
-        created_at: '2026-03-01T00:00:00Z',
-        published_at: '2026-03-01T00:00:00Z',
-        sections: [],
-        signing_records: [],
-      },
-      {
-        id: 'ver-hist-2',
-        policy_id: 'pol-1',
-        version_number: 'v.2.00',
-        status: 'archived',
-        require_esignature: false,
-        numbered_sections: false,
-        alternative_documentation: 'none',
-        styled_pdf_url: null,
-        created_at: '2026-01-15T00:00:00Z',
-        published_at: '2026-01-15T00:00:00Z',
-        sections: [],
-        signing_records: [],
-      },
-      {
-        id: 'ver-hist-3',
-        policy_id: 'pol-1',
-        version_number: 'v.1.00',
-        status: 'archived',
-        require_esignature: false,
-        numbered_sections: false,
-        alternative_documentation: 'none',
-        styled_pdf_url: null,
-        created_at: '2025-10-01T00:00:00Z',
-        published_at: '2025-10-01T00:00:00Z',
-        sections: [],
-        signing_records: [],
-      },
-    ],
-    receivers: [
-      { id: 'rec-1', policy_id: 'pol-1', organization_id: 'org-1', added_at: '2026-04-02T09:08:56Z', org: MOCK_ORGS[0] },
-      { id: 'rec-2', policy_id: 'pol-1', organization_id: 'org-2', added_at: '2026-04-02T09:08:56Z', org: MOCK_ORGS[1] },
-      { id: 'rec-3', policy_id: 'pol-1', organization_id: 'org-3', added_at: '2026-04-02T09:08:56Z', org: MOCK_ORGS[2] },
-      { id: 'rec-4', policy_id: 'pol-1', organization_id: 'org-4', added_at: '2026-04-02T09:08:56Z', org: MOCK_ORGS[3] },
-      { id: 'rec-5', policy_id: 'pol-1', organization_id: 'org-5', added_at: '2026-04-02T09:08:56Z', org: MOCK_ORGS[4] },
-    ],
-  },
-  {
-    id: 'pol-2',
-    title: 'BSCI - Terms of Implementation for Business Partners',
-    owner_id: null,
-    reminder_period_days: null,
-    created_at: '2026-04-02T09:08:56Z',
-    updated_at: '2026-04-02T09:08:56Z',
-    versions: [],
-    receivers: [],
-  },
-]
+function sortSections(policies) {
+  for (const pol of policies) {
+    for (const ver of pol.versions ?? []) {
+      ver.sections?.sort((a, b) => a.order_index - b.order_index)
+    }
+  }
+}
 
 export const usePoliciesStore = defineStore('policies', () => {
-  const policies = ref(MOCK_DATA)
-  const organizations = ref(MOCK_ORGS)
+  const policies = ref([])
+  const organizations = ref([])
   const loading = ref(false)
 
   const kpis = computed(() => {
@@ -168,22 +30,33 @@ export const usePoliciesStore = defineStore('policies', () => {
     let needReview = 0
     let rejections = 0
     for (const policy of policies.value) {
-      const activeVersion = policy.versions.find(v => v.status === 'active')
+      const activeVersion = policy.versions?.find(v => v.status === 'active')
       if (activeVersion) {
-        for (const sr of activeVersion.signing_records) {
+        for (const sr of activeVersion.signing_records ?? []) {
           if (sr.status === 'pending') pendingSignatures++
           if (sr.status === 'needs_review') needReview++
           if (sr.status === 'rejected') rejections++
         }
       }
     }
-    return {
-      totalPolicies: policies.value.length,
-      pendingSignatures,
-      needReview,
-      rejections,
-    }
+    return { totalPolicies: policies.value.length, pendingSignatures, needReview, rejections }
   })
+
+  async function fetchAll() {
+    loading.value = true
+    const [{ data: orgs, error: orgsErr }, { data: pols, error: polsErr }] = await Promise.all([
+      supabase.from('organizations').select('*').order('name'),
+      supabase.from('policies').select(POLICIES_QUERY).order('created_at', { ascending: false }),
+    ])
+    if (orgsErr) console.error('fetchAll orgs:', orgsErr)
+    if (polsErr) console.error('fetchAll policies:', polsErr)
+    organizations.value = orgs ?? []
+    sortSections(pols ?? [])
+    policies.value = pols ?? []
+    loading.value = false
+  }
+
+  // ── Read helpers (synchronous, work on local state) ───────────────────
 
   function getPolicyById(id) {
     return policies.value.find(p => p.id === id)
@@ -191,7 +64,7 @@ export const usePoliciesStore = defineStore('policies', () => {
 
   function getVersionById(id) {
     for (const policy of policies.value) {
-      const ver = policy.versions.find(v => v.id === id)
+      const ver = policy.versions?.find(v => v.id === id)
       if (ver) return { version: ver, policy }
     }
     return null
@@ -199,125 +72,189 @@ export const usePoliciesStore = defineStore('policies', () => {
 
   function getPolicyForVersion(versionId) {
     for (const policy of policies.value) {
-      if (policy.versions.find(v => v.id === versionId)) return policy
+      if (policy.versions?.find(v => v.id === versionId)) return policy
     }
     return null
   }
 
-  function updateVersion(versionId, updates) {
-    for (const policy of policies.value) {
-      const ver = policy.versions.find(v => v.id === versionId)
-      if (ver) {
-        Object.assign(ver, updates)
-        return
-      }
-    }
-  }
+  // ── Mutations (optimistic update + background DB write) ───────────────
 
-  function updatePolicy(policyId, updates) {
-    const policy = policies.value.find(p => p.id === policyId)
-    if (policy) Object.assign(policy, updates)
-  }
-
-  function publishVersion(versionId) {
-    for (const policy of policies.value) {
-      const ver = policy.versions.find(v => v.id === versionId)
-      if (ver) {
-        policy.versions.forEach(v => { if (v.status === 'active') v.status = 'archived' })
-        ver.status = 'active'
-        ver.published_at = new Date().toISOString()
-        return
-      }
-    }
-  }
-
-  function addReceiver(policyId, org) {
-    const policy = policies.value.find(p => p.id === policyId)
-    if (!policy) return
-    if (policy.receivers.find(r => r.organization_id === org.id)) return
-    policy.receivers.push({
-      id: `rec-${Date.now()}`,
-      policy_id: policyId,
-      organization_id: org.id,
-      added_at: new Date().toISOString(),
-      org,
-    })
-  }
-
-  function removeReceiver(policyId, receiverId) {
-    const policy = policies.value.find(p => p.id === policyId)
-    if (!policy) return
-    policy.receivers = policy.receivers.filter(r => r.id !== receiverId)
-  }
-
-  function addSection(versionId) {
-    for (const policy of policies.value) {
-      const ver = policy.versions.find(v => v.id === versionId)
-      if (ver) {
-        ver.sections.push({
-          id: `sec-${Date.now()}`,
-          version_id: versionId,
-          order_index: ver.sections.length,
-          title: '',
-          content: { type: 'doc', content: [{ type: 'paragraph' }] },
-          footnote: null,
-        })
-        return
-      }
-    }
-  }
-
-  function updateSection(versionId, sectionId, updates) {
-    for (const policy of policies.value) {
-      const ver = policy.versions.find(v => v.id === versionId)
-      if (ver) {
-        const sec = ver.sections.find(s => s.id === sectionId)
-        if (sec) Object.assign(sec, updates)
-        return
-      }
-    }
-  }
-
-  function removeSection(versionId, sectionId) {
-    for (const policy of policies.value) {
-      const ver = policy.versions.find(v => v.id === versionId)
-      if (ver) {
-        ver.sections = ver.sections.filter(s => s.id !== sectionId)
-        ver.sections.forEach((s, i) => { s.order_index = i })
-        return
-      }
-    }
-  }
-
-  function createPolicy(title) {
-    const id = `pol-${Date.now()}`
-    policies.value.push({
-      id,
+  async function createPolicy(title) {
+    const policyId = crypto.randomUUID()
+    const versionId = crypto.randomUUID()
+    const now = new Date().toISOString()
+    const newPolicy = {
+      id: policyId,
       title,
       owner_id: null,
       reminder_period_days: null,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+      created_at: now,
+      updated_at: now,
       versions: [{
-        id: `ver-${Date.now()}`,
-        policy_id: id,
+        id: versionId,
+        policy_id: policyId,
         version_number: 'v.1.00',
         status: 'draft',
         require_esignature: false,
         numbered_sections: false,
         alternative_documentation: 'none',
         styled_pdf_url: null,
-        created_at: new Date().toISOString(),
+        created_at: now,
         published_at: null,
         sections: [],
         signing_records: [],
       }],
       receivers: [],
+    }
+    policies.value.unshift(newPolicy)
+
+    const { error: pErr } = await supabase.from('policies').insert({
+      id: policyId, title, created_at: now, updated_at: now,
     })
+    if (pErr) { console.error('createPolicy:', pErr); return }
+
+    const { error: vErr } = await supabase.from('policy_versions').insert({
+      id: versionId,
+      policy_id: policyId,
+      version_number: 'v.1.00',
+      status: 'draft',
+      require_esignature: false,
+      numbered_sections: false,
+      alternative_documentation: 'none',
+      created_at: now,
+    })
+    if (vErr) console.error('createPolicy version:', vErr)
+  }
+
+  async function updatePolicy(policyId, updates) {
+    const policy = policies.value.find(p => p.id === policyId)
+    if (policy) Object.assign(policy, updates)
+
+    const { error } = await supabase.from('policies').update(updates).eq('id', policyId)
+    if (error) console.error('updatePolicy:', error)
+  }
+
+  async function updateVersion(versionId, updates) {
+    for (const policy of policies.value) {
+      const ver = policy.versions?.find(v => v.id === versionId)
+      if (ver) { Object.assign(ver, updates); break }
+    }
+
+    const { error } = await supabase.from('policy_versions').update(updates).eq('id', versionId)
+    if (error) console.error('updateVersion:', error)
+  }
+
+  async function publishVersion(versionId) {
+    for (const policy of policies.value) {
+      const ver = policy.versions?.find(v => v.id === versionId)
+      if (ver) {
+        const now = new Date().toISOString()
+        const prevActive = policy.versions.filter(v => v.status === 'active')
+        prevActive.forEach(v => { v.status = 'archived' })
+        ver.status = 'active'
+        ver.published_at = now
+
+        if (prevActive.length) {
+          await supabase.from('policy_versions')
+            .update({ status: 'archived' })
+            .in('id', prevActive.map(v => v.id))
+        }
+        const { error } = await supabase.from('policy_versions')
+          .update({ status: 'active', published_at: now })
+          .eq('id', versionId)
+        if (error) console.error('publishVersion:', error)
+        return
+      }
+    }
+  }
+
+  async function addReceiver(policyId, org) {
+    const policy = policies.value.find(p => p.id === policyId)
+    if (!policy) return
+    if (policy.receivers.find(r => r.organization_id === org.id)) return
+
+    const id = crypto.randomUUID()
+    const now = new Date().toISOString()
+    policy.receivers.push({ id, policy_id: policyId, organization_id: org.id, added_at: now, org })
+
+    const { error } = await supabase.from('policy_receivers')
+      .insert({ id, policy_id: policyId, organization_id: org.id, added_at: now })
+    if (error) console.error('addReceiver:', error)
+  }
+
+  async function removeReceiver(policyId, receiverId) {
+    const policy = policies.value.find(p => p.id === policyId)
+    if (!policy) return
+    policy.receivers = policy.receivers.filter(r => r.id !== receiverId)
+
+    const { error } = await supabase.from('policy_receivers').delete().eq('id', receiverId)
+    if (error) console.error('removeReceiver:', error)
+  }
+
+  async function addSection(versionId) {
+    for (const policy of policies.value) {
+      const ver = policy.versions?.find(v => v.id === versionId)
+      if (ver) {
+        const id = crypto.randomUUID()
+        const orderIndex = ver.sections.length
+        ver.sections.push({
+          id,
+          version_id: versionId,
+          order_index: orderIndex,
+          title: '',
+          content: { type: 'doc', content: [{ type: 'paragraph' }] },
+          footnote: null,
+        })
+
+        const { error } = await supabase.from('policy_sections').insert({
+          id, version_id: versionId, order_index: orderIndex,
+          title: '', content: { type: 'doc', content: [{ type: 'paragraph' }] },
+        })
+        if (error) console.error('addSection:', error)
+        return
+      }
+    }
+  }
+
+  async function updateSection(versionId, sectionId, updates) {
+    for (const policy of policies.value) {
+      const ver = policy.versions?.find(v => v.id === versionId)
+      if (ver) {
+        const sec = ver.sections.find(s => s.id === sectionId)
+        if (sec) Object.assign(sec, updates)
+        break
+      }
+    }
+
+    const { error } = await supabase.from('policy_sections').update(updates).eq('id', sectionId)
+    if (error) console.error('updateSection:', error)
+  }
+
+  async function removeSection(versionId, sectionId) {
+    for (const policy of policies.value) {
+      const ver = policy.versions?.find(v => v.id === versionId)
+      if (ver) {
+        ver.sections = ver.sections.filter(s => s.id !== sectionId)
+        ver.sections.forEach((s, i) => { s.order_index = i })
+
+        const { error } = await supabase.from('policy_sections').delete().eq('id', sectionId)
+        if (error) console.error('removeSection:', error)
+
+        // rewrite order_index for remaining sections
+        if (ver.sections.length) {
+          await supabase.from('policy_sections').upsert(
+            ver.sections.map(s => ({ id: s.id, version_id: versionId, order_index: s.order_index })),
+            { onConflict: 'id' }
+          )
+        }
+        return
+      }
+    }
   }
 
   return {
     policies, organizations, loading, kpis,
+    fetchAll,
     getPolicyById, getVersionById, getPolicyForVersion,
     updateVersion, updatePolicy, publishVersion,
     addReceiver, removeReceiver,
