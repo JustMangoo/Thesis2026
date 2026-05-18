@@ -2,7 +2,11 @@
 import { onMounted, onUnmounted } from 'vue'
 import { X } from '@lucide/vue'
 
-const props = defineProps({ modelValue: Boolean, title: String })
+const props = defineProps({
+  modelValue: Boolean,
+  title: String,
+  maxWidth: { type: String, default: 'max-w-md' },
+})
 const emit = defineEmits(['update:modelValue'])
 function close() { emit('update:modelValue', false) }
 function onKeydown(e) { if (e.key === 'Escape') close() }
@@ -14,7 +18,7 @@ onUnmounted(() => document.removeEventListener('keydown', onKeydown))
   <teleport to="body">
     <transition name="fade">
       <div v-if="modelValue" class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" @click.self="close">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+        <div :class="['bg-white rounded-lg shadow-xl w-full', maxWidth]">
           <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-200">
             <h3 class="text-base font-semibold text-neutral-900">{{ title }}</h3>
             <button class="text-neutral-400 hover:text-neutral-600" @click="close">

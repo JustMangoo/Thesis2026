@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { usePoliciesStore } from '@/stores/policies.js'
 import { VueDraggable } from 'vue-draggable-plus'
 import PolicyEditor from './PolicyEditor.vue'
+import PolicyPreviewModal from './PolicyPreviewModal.vue'
 
 const props = defineProps({ versionId: String, readonly: Boolean })
 const store = usePoliciesStore()
@@ -24,13 +25,15 @@ function updateFootnote(id, footnote) { store.updateSection(props.versionId, id,
 
 const showFootnote = ref({})
 function toggleFootnote(id) { showFootnote.value[id] = !showFootnote.value[id] }
+
+const showPreview = ref(false)
 </script>
 
 <template>
   <div class="p-6">
     <div class="flex items-center justify-between mb-4">
       <h3 class="text-base font-semibold text-neutral-900">Content</h3>
-      <AppButton variant="secondary" size="sm">
+      <AppButton variant="secondary" size="sm" @click="showPreview = true">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -89,4 +92,9 @@ function toggleFootnote(id) { showFootnote.value[id] = !showFootnote.value[id] }
       Add new section
     </button>
   </div>
+
+  <PolicyPreviewModal
+    v-model="showPreview"
+    :version-id="versionId"
+  />
 </template>
