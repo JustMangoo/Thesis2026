@@ -1,5 +1,10 @@
 <script setup>
+import { onMounted } from 'vue'
 import AppSidebar from '@/components/AppSidebar.vue'
+import { usePoliciesStore } from '@/stores/policies.js'
+
+const store = usePoliciesStore()
+onMounted(() => store.fetchAll())
 </script>
 
 <template>
