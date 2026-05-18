@@ -17,6 +17,7 @@ import AppAvatar from '@/components/ui/AppAvatar.vue'
 import AppChip from '@/components/ui/AppChip.vue'
 import AppProgressBar from '@/components/ui/AppProgressBar.vue'
 import AppAlert from '@/components/ui/AppAlert.vue'
+import AppPopover from '@/components/ui/AppPopover.vue'
 
 const app = createApp(App)
 app.use(createPinia())
@@ -34,5 +35,6 @@ app.component('AppAvatar', AppAvatar)
 app.component('AppChip', AppChip)
 app.component('AppProgressBar', AppProgressBar)
 app.component('AppAlert', AppAlert)
+app.component('AppPopover', AppPopover)
 
 app.mount('#app')

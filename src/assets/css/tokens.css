@@ -1,41 +1,187 @@
 :root {
-  --color-primary:        #7c3aed;
-  --color-primary-light:  #ede9fe;
-  --color-primary-dark:   #5b21b6;
+  /* ── Text ────────────────────────────────────────────────────────── */
+  --color-text-default:                #0F172A;
+  --color-text-inverse:                #FFFFFF;
+  --color-text-caption:                #94A3B8;
+  --color-text-placeholder:            #64748B;
+  --color-text-disabled:               #CBD5E1;
+  --color-text-primary:                #7C3AED;
+  --color-text-success:                #0D9488;
+  --color-text-warning:                #D97706;
+  --color-text-danger:                 #E11D48;
+  --color-text-link:                   #2563EB;
+  --color-text-visited:                #7C3AED;
 
-  --color-success:        #0d9488;
-  --color-success-light:  #ccfbf1;
-  --color-warning:        #d97706;
-  --color-warning-light:  #fef3c7;
-  --color-danger:         #e11d48;
-  --color-danger-light:   #ffe4e6;
-  --color-info:           #2563eb;
-  --color-info-light:     #dbeafe;
+  /* ── Fill ────────────────────────────────────────────────────────── */
+  --color-fill-page:                   #F8FAFC;
+  --color-fill-surface:                #FFFFFF;
+  --color-fill-transparent:            transparent;
 
-  --color-neutral-50:     #f8fafc;
-  --color-neutral-100:    #f1f5f9;
-  --color-neutral-200:    #e2e8f0;
-  --color-neutral-300:    #cbd5e1;
-  --color-neutral-400:    #94a3b8;
-  --color-neutral-500:    #64748b;
-  --color-neutral-700:    #334155;
-  --color-neutral-900:    #0f172a;
+  --color-fill-neutral:                #E2E8F0;
+  --color-fill-neutral-hovered:        #CBD5E1;
+  --color-fill-neutral-pressed:        #94A3B8;
+  --color-fill-neutral-subtle:         #F8FAFC;
+  --color-fill-neutral-subtle-hovered: #F1F5F9;
+  --color-fill-neutral-subtle-pressed: #E2E8F0;
 
-  --font-family:          'Montserrat', sans-serif;
-  --font-size-xs:         0.75rem;
-  --font-size-sm:         0.875rem;
-  --font-size-md:         1rem;
-  --font-size-lg:         1.125rem;
-  --font-size-xl:         1.25rem;
-  --font-size-2xl:        1.5rem;
+  --color-fill-primary:                #7C3AED;
+  --color-fill-primary-hovered:        #6D28D9;
+  --color-fill-primary-pressed:        #5B21B6;
+  --color-fill-primary-subtle:         #EDE9FE;
+  --color-fill-primary-subtle-hovered: #DDD6FE;
+  --color-fill-primary-subtle-pressed: #C4B5FD;
 
-  --space-tight:          0.25rem;
-  --space-gap:            0.5rem;
-  --space-inner:          1rem;
-  --space-section:        1.5rem;
-  --space-page:           2rem;
+  --color-fill-success:                #0D9488;
+  --color-fill-success-hovered:        #0F766E;
+  --color-fill-success-pressed:        #115E59;
+  --color-fill-success-subtle:         #CCFBF1;
+  --color-fill-success-subtle-hovered: #99F6E4;
+  --color-fill-success-subtle-pressed: #5EEAD4;
 
-  --radius-sm:            0.375rem;
-  --radius-md:            0.5rem;
-  --radius-lg:            0.75rem;
+  --color-fill-warning:                #D97706;
+  --color-fill-warning-hovered:        #B45309;
+  --color-fill-warning-pressed:        #92400E;
+  --color-fill-warning-subtle:         #FEF3C7;
+  --color-fill-warning-subtle-hovered: #FDE68A;
+  --color-fill-warning-subtle-pressed: #FCD34D;
+
+  --color-fill-danger:                 #E11D48;
+  --color-fill-danger-hovered:         #BE123C;
+  --color-fill-danger-pressed:         #9F1239;
+  --color-fill-danger-subtle:          #FFE4E6;
+  --color-fill-danger-subtle-hovered:  #FECDD3;
+  --color-fill-danger-subtle-pressed:  #FDA4AF;
+
+  --color-fill-info:                   #2563EB;
+  --color-fill-info-hovered:           #1D4ED8;
+  --color-fill-info-pressed:           #1E40AF;
+  --color-fill-info-subtle:            #DBEAFE;
+  --color-fill-info-subtle-hovered:    #BFDBFE;
+  --color-fill-info-subtle-pressed:    #93C5FD;
+
+  /* ── Border ──────────────────────────────────────────────────────── */
+  --color-border-default:              #E2E8F0;
+  --color-border-neutral:              #CBD5E1;
+  --color-border-primary:              #7C3AED;
+  --color-border-success:              #0D9488;
+  --color-border-warning:              #D97706;
+  --color-border-danger:               #E11D48;
+  --color-border-info:                 #2563EB;
+  --color-border-disabled:             #E2E8F0;
+  --color-border-ring:                 #5B21B6;
+
+  /* ── Legacy aliases (Tailwind config + components) ───────────────── */
+  --color-primary:       var(--color-fill-primary);
+  --color-primary-light: var(--color-fill-primary-subtle);
+  --color-primary-dark:  var(--color-fill-primary-pressed);
+
+  --color-success:       var(--color-fill-success);
+  --color-success-light: var(--color-fill-success-subtle);
+  --color-warning:       var(--color-fill-warning);
+  --color-warning-light: var(--color-fill-warning-subtle);
+  --color-danger:        var(--color-fill-danger);
+  --color-danger-light:  var(--color-fill-danger-subtle);
+  --color-info:          var(--color-fill-info);
+  --color-info-light:    var(--color-fill-info-subtle);
+
+  /* ── Neutral palette (raw slate scale) ───────────────────────────── */
+  --color-neutral-50:    theme('colors.slate.50');
+  --color-neutral-100:   theme('colors.slate.100');
+  --color-neutral-200:   theme('colors.slate.200');
+  --color-neutral-300:   theme('colors.slate.300');
+  --color-neutral-400:   theme('colors.slate.400');
+  --color-neutral-500:   theme('colors.slate.500');
+  --color-neutral-700:   theme('colors.slate.700');
+  --color-neutral-900:   theme('colors.slate.900');
+
+  /* ── Typography ──────────────────────────────────────────────────── */
+  --font-family:         'Montserrat', sans-serif;
+  --font-size-xs:        0.75rem;
+  --font-size-sm:        0.875rem;
+  --font-size-md:        1rem;
+  --font-size-lg:        1.125rem;
+  --font-size-xl:        1.25rem;
+  --font-size-2xl:       1.5rem;
+
+  /* ── Spacing ─────────────────────────────────────────────────────── */
+  --space-tight:         0.25rem;
+  --space-gap:           0.5rem;
+  --space-inner:         1rem;
+  --space-section:       1.5rem;
+  --space-page:          2rem;
+
+  /* ── Radius ──────────────────────────────────────────────────────── */
+  --radius-sm:           0.375rem;
+  --radius-md:           0.5rem;
+  --radius-lg:           0.75rem;
+}
+
+/* ── Dark theme — Figma Dark.tokens.json ─────────────────────────── */
+.dark {
+  --color-text-default:                #FFFFFF;
+  --color-text-inverse:                #0F172A;
+  --color-text-caption:                #94A3B8;
+  --color-text-placeholder:            #64748B;
+  --color-text-disabled:               #475569;
+  --color-text-primary:                #C4B5FD;
+  --color-text-success:                #5EEAD4;
+  --color-text-warning:                #FCD34D;
+  --color-text-danger:                 #FDA4AF;
+  --color-text-link:                   #93C5FD;
+  --color-text-visited:                #C4B5FD;
+
+  --color-fill-page:                   #000000;
+  --color-fill-surface:                #0F172A;
+
+  --color-fill-neutral:                #CBD5E1;
+  --color-fill-neutral-hovered:        #E2E8F0;
+  --color-fill-neutral-pressed:        #F1F5F9;
+  --color-fill-neutral-subtle:         #0F172A;
+  --color-fill-neutral-subtle-hovered: #1E293B;
+  --color-fill-neutral-subtle-pressed: #334155;
+
+  --color-fill-primary:                #C4B5FD;
+  --color-fill-primary-hovered:        #DDD6FE;
+  --color-fill-primary-pressed:        #EDE9FE;
+  --color-fill-primary-subtle:         #5B21B6;
+  --color-fill-primary-subtle-hovered: #6D28D9;
+  --color-fill-primary-subtle-pressed: #7C3AED;
+
+  --color-fill-success:                #5EEAD4;
+  --color-fill-success-hovered:        #99F6E4;
+  --color-fill-success-pressed:        #CCFBF1;
+  --color-fill-success-subtle:         #115E59;
+  --color-fill-success-subtle-hovered: #0F766E;
+  --color-fill-success-subtle-pressed: #0D9488;
+
+  --color-fill-warning:                #FCD34D;
+  --color-fill-warning-hovered:        #FDE68A;
+  --color-fill-warning-pressed:        #FEF3C7;
+  --color-fill-warning-subtle:         #92400E;
+  --color-fill-warning-subtle-hovered: #B45309;
+  --color-fill-warning-subtle-pressed: #D97706;
+
+  --color-fill-danger:                 #FDA4AF;
+  --color-fill-danger-hovered:         #FECDD3;
+  --color-fill-danger-pressed:         #FFE4E6;
+  --color-fill-danger-subtle:          #9F1239;
+  --color-fill-danger-subtle-hovered:  #BE123C;
+  --color-fill-danger-subtle-pressed:  #E11D48;
+
+  --color-fill-info:                   #93C5FD;
+  --color-fill-info-hovered:           #BFDBFE;
+  --color-fill-info-pressed:           #DBEAFE;
+  --color-fill-info-subtle:            #1E40AF;
+  --color-fill-info-subtle-hovered:    #1D4ED8;
+  --color-fill-info-subtle-pressed:    #2563EB;
+
+  --color-border-default:              #94A3B8;
+  --color-border-neutral:              #64748B;
+  --color-border-primary:              #C4B5FD;
+  --color-border-success:              #5EEAD4;
+  --color-border-warning:              #FCD34D;
+  --color-border-danger:               #FDA4AF;
+  --color-border-info:                 #93C5FD;
+  --color-border-disabled:             #FFFFFF;
+  --color-border-ring:                 #6D28D9;
 }

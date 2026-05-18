@@ -6,24 +6,19 @@ const router = useRouter()
 const props = defineProps({ kpis: Object })
 
 const cells = [
-  { key: 'totalPolicies',      label: 'Total policies',       icon: FileText,     iconBg: 'bg-info-light',    iconColor: 'text-info',       clickable: false },
-  { key: 'pendingSignatures',  label: 'Pending signatures',   icon: Clock,        iconBg: 'bg-neutral-100',   iconColor: 'text-neutral-400', clickable: true },
-  { key: 'needReview',         label: 'Need review',          icon: AlertCircle,  iconBg: 'bg-warning-light', iconColor: 'text-warning',    clickable: false },
-  { key: 'rejections',         label: 'Rejections',           icon: Ban,          iconBg: 'bg-danger-light',  iconColor: 'text-danger',     clickable: true },
+  { key: 'totalPolicies', label: 'Total policies', icon: FileText, iconBg: 'bg-info-light', iconColor: 'text-info', clickable: false },
+  { key: 'pendingSignatures', label: 'Pending signatures', icon: Clock, iconBg: 'bg-neutral-100', iconColor: 'text-neutral-400', clickable: true },
+  { key: 'needReview', label: 'Need review', icon: AlertCircle, iconBg: 'bg-warning-light', iconColor: 'text-warning', clickable: false },
+  { key: 'rejections', label: 'Rejections', icon: Ban, iconBg: 'bg-danger-light', iconColor: 'text-danger', clickable: true },
 ]
 </script>
 
 <template>
-  <div class="bg-white border border-neutral-200 rounded-xl mb-6 grid grid-cols-4 divide-x divide-neutral-200">
-    <div
-      v-for="cell in cells"
-      :key="cell.key"
-      :class="[
-        'px-6 py-5 flex items-center justify-between',
-        cell.clickable ? 'cursor-pointer hover:bg-neutral-50 transition-colors' : '',
-      ]"
-      @click="cell.clickable && router.push('/suppliers')"
-    >
+  <div class="bg-white border border-neutral-200 rounded-xl grid grid-cols-4 divide-x divide-neutral-200">
+    <div v-for="cell in cells" :key="cell.key" :class="[
+      'px-6 py-5 flex items-start justify-between',
+      cell.clickable ? 'cursor-pointer hover:bg-neutral-50 transition-colors' : '',
+    ]" @click="cell.clickable && router.push('/suppliers')">
       <div>
         <p class="text-3xl font-bold text-neutral-900">{{ kpis[cell.key] }}</p>
         <p class="text-sm text-neutral-500 mt-1">{{ cell.label }}</p>
