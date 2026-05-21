@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import { usePoliciesStore } from '@/stores/policies.js'
 import { useUiStore } from '@/stores/ui.js'
+import { Pencil } from '@lucide/vue'
 
 const props = defineProps({ versionId: String })
 const store = usePoliciesStore()
@@ -30,11 +31,8 @@ function openManage() {
       <h3 class="text-base font-semibold text-neutral-900">Receivers</h3>
       <div class="flex items-center gap-2">
         <AppButton variant="secondary" size="sm" @click="openManage">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-          </svg>
-          Manage receivers
+          <Pencil class="w-4 h-4" />
+          Add or manage receivers
         </AppButton>
         <button class="p-1.5 text-neutral-400 hover:text-neutral-600 rounded-sm hover:bg-neutral-100">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
