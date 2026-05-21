@@ -43,7 +43,7 @@ const tabs = [
       <AppTabs v-model="tab" :tabs="tabs" class="px-6" />
 
       <div v-if="readonly" class="px-6 pt-4">
-        <AppAlert variant="warning">Read only — published versions cannot be edited.</AppAlert>
+        <AppAlert variant="neutral">Read only — published versions cannot be edited.</AppAlert>
       </div>
 
       <VersionDrawerContent

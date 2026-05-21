@@ -12,6 +12,15 @@ const activeVersion = computed(() => policy.value?.versions.find(v => v.status =
 const draftVersion = computed(() => policy.value?.versions.find(v => v.status === 'draft'))
 const historyVersions = computed(() => policy.value?.versions.filter(v => v.status === 'archived') ?? [])
 
+const memberOptions = computed(() =>
+  store.members.map(m => ({ value: m.id, label: m.name }))
+)
+
+const ownerId = computed({
+  get: () => policy.value?.owner_id ?? '',
+  set: val => store.updatePolicy(props.policyId, { owner_id: val || null }),
+})
+
 const reminderPeriod = computed({
   get: () => policy.value?.reminder_period_days ?? '',
   set: val => store.updatePolicy(props.policyId, { reminder_period_days: Number(val) }),
@@ -77,15 +86,23 @@ function publishDraft() {
     <section>
       <h3 class="text-base font-semibold text-neutral-900 mb-3">Manage</h3>
       <div class="space-y-4">
-        <div>
-          <p class="text-sm font-medium text-neutral-700 mb-0.5">Owner</p>
-          <p class="text-xs text-neutral-500 mb-2">Team member responsible for keeping this policy up to date</p>
-          <AppSelect model-value="" placeholder="Select owner" :options="[]" />
+        <div class="grid grid-cols-6 gap-4 items-start">
+          <div class="col-span-2">
+            <p class="text-sm font-medium text-neutral-700 mb-0.5">Owner</p>
+            <p class="text-xs text-neutral-500">Team member responsible for keeping this policy up to date</p>
+          </div>
+          <div class="col-span-4">
+            <AppSelect v-model="ownerId" placeholder="Select owner" :options="memberOptions" />
+          </div>
         </div>
-        <div>
-          <p class="text-sm font-medium text-neutral-700 mb-0.5">Reminder period</p>
-          <p class="text-xs text-neutral-500 mb-2">Days before unsigned receivers get an automatic reminder</p>
-          <AppInput v-model="reminderPeriod" type="number" placeholder="Placeholder" suffix="days" />
+        <div class="grid grid-cols-6 gap-4 items-start">
+          <div class="col-span-2">
+            <p class="text-sm font-medium text-neutral-700 mb-0.5">Reminder period</p>
+            <p class="text-xs text-neutral-500">Days before unsigned receivers get an automatic reminder</p>
+          </div>
+          <div class="col-span-4">
+            <AppInput v-model="reminderPeriod" type="number" placeholder="Placeholder" suffix="days" />
+          </div>
         </div>
       </div>
     </section>

@@ -5,6 +5,7 @@ const variantClasses = {
   info: 'bg-info-light text-info border-info',
   warning: 'bg-warning-light text-warning border-warning',
   danger: 'bg-danger-light text-danger border-danger',
+  neutral: 'bg-neutral-100 text-neutral-500 border-neutral-300',
 }
 </script>
 

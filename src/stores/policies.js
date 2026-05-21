@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabase.js'
 
 const POLICIES_QUERY = `
   *,
+  owner:org_members(*),
   versions:policy_versions(
     *,
     sections:policy_sections(*),
@@ -23,6 +24,7 @@ function sortSections(policies) {
 export const usePoliciesStore = defineStore('policies', () => {
   const policies = ref([])
   const organizations = ref([])
+  const members = ref([])
   const loading = ref(false)
 
   const kpis = computed(() => {
@@ -44,13 +46,16 @@ export const usePoliciesStore = defineStore('policies', () => {
 
   async function fetchAll() {
     loading.value = true
-    const [{ data: orgs, error: orgsErr }, { data: pols, error: polsErr }] = await Promise.all([
+    const [{ data: orgs, error: orgsErr }, { data: mems, error: memsErr }, { data: pols, error: polsErr }] = await Promise.all([
       supabase.from('organizations').select('*').order('name'),
+      supabase.from('org_members').select('*').order('name'),
       supabase.from('policies').select(POLICIES_QUERY).order('created_at', { ascending: false }),
     ])
     if (orgsErr) console.error('fetchAll orgs:', orgsErr)
+    if (memsErr) console.error('fetchAll members:', memsErr)
     if (polsErr) console.error('fetchAll policies:', polsErr)
     organizations.value = orgs ?? []
+    members.value = mems ?? []
     sortSections(pols ?? [])
     policies.value = pols ?? []
     loading.value = false
@@ -253,7 +258,7 @@ export const usePoliciesStore = defineStore('policies', () => {
   }
 
   return {
-    policies, organizations, loading, kpis,
+    policies, organizations, members, loading, kpis,
     fetchAll,
     getPolicyById, getVersionById, getPolicyForVersion,
     updateVersion, updatePolicy, publishVersion,

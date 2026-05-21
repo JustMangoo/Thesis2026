@@ -1,12 +1,16 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useUiStore } from '@/stores/ui.js'
+import { usePoliciesStore } from '@/stores/policies.js'
 import VersionRow from './VersionRow.vue'
 import { ChevronDown, Settings } from '@lucide/vue'
 
-const props = defineProps({ policy: Object })
+const props = defineProps({ policy: Object, expanded: Boolean })
 const uiStore = useUiStore()
-const expanded = ref(true)
+const store = usePoliciesStore()
+
+const owner = computed(() => store.members.find(m => m.id === props.policy.owner_id) ?? null)
+defineEmits(['toggle'])
 
 const activeVersion = computed(() => props.policy.versions.find(v => v.status === 'active'))
 const draftVersion = computed(() => props.policy.versions.find(v => v.status === 'draft'))
@@ -28,7 +32,7 @@ const lastUpdated = computed(() => {
 <template>
   <div class="bg-white border border-neutral-200 rounded-sm">
     <div class="px-4 py-3 flex items-center gap-3">
-      <button class="text-neutral-400 hover:text-neutral-600 flex-shrink-0" @click="expanded = !expanded">
+      <button class="text-neutral-400 hover:text-neutral-600 flex-shrink-0" @click="$emit('toggle')">
         <ChevronDown :class="['w-5 h-5 transition-transform', expanded ? 'rotate-0' : '-rotate-90']" />
       </button>
 
@@ -44,7 +48,7 @@ const lastUpdated = computed(() => {
         <AppProgressBar v-if="activeVersion" :value="signedCount" :max="totalReceivers" class="w-40" />
       </div>
       <div class="flex-1 flex justify-center">
-        <AppAvatar name="-" />
+        <AppAvatar :name="owner?.name ?? ''" />
       </div>
       <div class="flex-shrink-0">
         <AppButton variant="ghost" size="sm" @click="uiStore.openManageDrawer(policy.id, 'general')">
